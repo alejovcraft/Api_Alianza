@@ -14,6 +14,8 @@ import com.cibertec.alianzaweb.repository.PersonaRepository;
 import com.cibertec.alianzaweb.repository.RolRepository;
 import com.cibertec.alianzaweb.repository.UsuarioRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UsuarioService {
 
@@ -83,4 +85,6 @@ public class UsuarioService {
         // Guardamos los cambios
         usuarioRepo.save(usuarioExistente);
     }
+    
+    
 }
