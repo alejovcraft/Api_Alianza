@@ -31,4 +31,27 @@ public class EntradaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> buscarEntradaPorId(@PathVariable String id) {
+        try {
+            // Buscamos la entrada (Spring nos devuelve un 'Optional' por si no existe)
+            java.util.Optional<Entrada> entradaEncontrada = entradaRepository.findById(id);
+
+            // Si la encontramos, la devolvemos con un status 200 OK
+            if (entradaEncontrada.isPresent()) {
+                return ResponseEntity.ok(entradaEncontrada.get());
+            } else {
+                // Si no existe, devolvemos el error 404
+                Map<String, Object> response = new HashMap<>();
+                response.put("mensaje", "No se encontró la entrada con el ID: " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", "Error al buscar la entrada");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

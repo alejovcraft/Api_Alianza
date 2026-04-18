@@ -87,19 +87,18 @@ public class UsuarioController {
     }
     
     @PostMapping("/registro")
-    public ResponseEntity<?> registrar(@RequestBody RegistroRequest registroData) {
+    public ResponseEntity<?> registrarUsuario(@RequestBody RegistroRequest dto) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            Usuario usuarioCreado = service.registrarNuevoHincha(registroData);
+            // ¡Usamos tu método existente!
+        	service.registrarNuevoHincha(dto);
             
-            Map<String, Object> response = new HashMap<>();
-            response.put("mensaje", "¡Registro exitoso! Ya eres parte de la familia Blanquiazul.");
-            response.put("usuario", usuarioCreado.getUsername());
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); // Status 201 Created
+            response.put("mensaje", "¡Usuario registrado con éxito! Ya puedes iniciar sesión.");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
             
         } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("mensaje", "Error al registrar el usuario. Es posible que el DNI, Email o Usuario ya estén en uso.");
+            e.printStackTrace(); // Para ver el error exacto en tu consola de Eclipse
+            response.put("mensaje", "Error interno al registrar el usuario");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
