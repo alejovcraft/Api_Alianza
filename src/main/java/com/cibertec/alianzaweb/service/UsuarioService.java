@@ -66,4 +66,21 @@ public class UsuarioService {
         // Guardamos el usuario final
         return usuarioRepo.save(nuevoUsuario);
     }
+    
+    @org.springframework.transaction.annotation.Transactional
+    public void actualizarRolEstado(Usuario usuarioActualizado) {
+        // Buscamos el usuario existente
+        Usuario usuarioExistente = usuarioRepo.findById(usuarioActualizado.getId_usuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Actualizamos solo lo necesario (el Rol en este caso)
+        if (usuarioActualizado.getRol() != null) {
+            Rol nuevoRol = rolRepo.findById(usuarioActualizado.getRol().getId_rol())
+                    .orElseThrow(() -> new RuntimeException("Rol no válido"));
+            usuarioExistente.setRol(nuevoRol);
+        }
+        
+        // Guardamos los cambios
+        usuarioRepo.save(usuarioExistente);
+    }
 }
