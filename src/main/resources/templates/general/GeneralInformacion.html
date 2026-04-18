@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Alianza Lima | Club del Pueblo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    
+    <style>
+        :root {
+            --alianza-azul: #B8A26A;
+            --alianza-dorado: #B8A26A;
+            --alianza-blanco: #ffffff;
+            --fondo-partidos: #2c2c2c; /* Color oscuro para la sección de partidos */
+            --texto-claro: #f0f0f0;
+            --linea-separadora: #555555;
+        }
+
+        body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+        }
+        .navbar-brand { font-weight: bold; }
+
+        /* JUMBOTRON Y IMAGEN DE FONDO */
+        .jumbotron {
+            background-color: var(--alianza-azul);
+            color: var(--alianza-blanco);
+            padding: 5rem 2rem;
+            margin-bottom: 0;
+            border-radius: 0;
+            /* RUTA DE IMAGEN - DEBES ASEGURARTE QUE ESTE CORRECTA */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/img/menuprincipal/baner.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* BOTÓN "HAZTE ÍNTIMO" (DORADO/BEIGE Y TEXTO BLANCO) */
+        .btn-intimo {
+            background-color: var(--alianza-dorado);
+            color: var(--alianza-blanco);
+            border-color: var(--alianza-dorado);
+            font-weight: bold;
+            padding: 10px 30px;
+            font-size: 1.25rem;
+            transition: background-color 0.3s;
+        }
+        .btn-intimo:hover {
+            background-color: #9A845C;
+            color: var(--alianza-blanco);
+            border-color: #9A845C;
+        }
+        .bg-primary { background-color: var(--alianza-azul) !important; }
+
+        /* ESTILOS PARA LA SECCIÓN DE PARTIDOS */
+        .seccion-partidos {
+            background-color: var(--fondo-partidos);
+            color: var(--texto-claro);
+            padding: 3rem 0;
+        }
+        .partido-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .partido-detalle {
+            border-bottom: 1px solid var(--linea-separadora);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .equipo-nombre {
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        .vs-texto {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .partido-info-footer {
+            font-size: 0.9rem;
+            color: #aaaaaa;
+            margin-top: 1rem;
+        }
+		.escudo-partido {
+		    width: 90px;  /* Ajusta el tamaño según tu preferencia */
+		    height: 90px; /* Asegura que la imagen sea cuadrada */
+		    object-fit: contain; /* Para que la imagen no se recorte ni se estire */
+		    margin-bottom: 10px;
+		}
+		/* ESTILOS PARA LA SECCIÓN DE NOTICIAS */
+		.seccion-noticias {
+		    /* Aquí definimos el fondo de la sección principal de noticias */
+		    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+		                      url('/img/menuprincipal/fondon.jpg'); /* <-- RUTA DE LA IMAGEN DE FONDO */
+		    background-size: cover;
+		    background-position: center;
+		    background-repeat: no-repeat;
+		    
+		    padding: 3rem 0;
+		    color: var(--alianza-blanco); /* El texto será blanco para contrastar con el fondo oscuro */
+		}
+
+		/* Modificar el título para que destaque en el fondo oscuro */
+		.titulo-noticias {
+		    font-size: 2rem;
+		    font-weight: 600;
+		    color: var(--alianza-blanco); /* ¡Cambiado a blanco! */
+		    text-align: center;
+		    margin-bottom: 2rem;
+		    padding-bottom: 10px;
+		    border-bottom: 2px solid var(--alianza-dorado);
+		    display: inline-block;
+		    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+		}
+
+		/* Ajustes para las tarjetas (cards) para que se vean bien sobre el fondo oscuro */
+		.card-noticia {
+		    background-color: rgba(255, 255, 255, 0.9); /* Tarjeta semi-transparente o muy clara */
+		    transition: transform 0.3s ease;
+		    border: 1px solid #ddd;
+		    border-radius: 0.5rem;
+		    text-decoration: none;
+		    color: inherit;
+		    display: block;
+		}
+
+		.card-title-link {
+		    /* Mantenemos oscuro el texto principal para que se vea bien dentro de la tarjeta */
+		    color: #343a40; 
+		}
+		.card-title-link:hover {
+		    color: var(--alianza-azul);
+		    text-decoration: none;
+		}
+		/* ESTILOS PARA EL FOOTER */
+		.footer-banner-img {
+		    /* Reemplaza la imagen directamente en el CSS como fondo */
+		    background-image: url('/img/menuprincipal/patrocinadores.jpg');
+		    background-size: cover; /* Asegura que la imagen cubra todo el espacio */
+		    background-position: center; /* Centra la imagen */
+		    background-repeat: no-repeat;
+		    height: 120px; /* Define una altura visible para el banner */
+		    width: 100%;
+		    margin-bottom: 0;
+		}
+		/* ESTILOS PARA EL BANNER DE ENTRADAS */
+		.banner-entradas {
+		    background-color: var(--alianza-azul); /* Color de fallback */
+		    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+		                      url('/img/menuprincipal/entradas.png'); /* <-- RUTA DE LA IMAGEN PROMOCIONAL */
+		    background-size: cover;
+		    background-position: center;
+		    background-repeat: no-repeat;
+		    padding: 5rem 0; /* Espacio vertical grande */
+		    text-align: center;
+		    color: var(--alianza-blanco);
+		    margin-bottom: 0; /* Para pegarse a la sección de noticias si es necesario */
+		}
+		/* Estilo para el botón de Entradas (similar al "Hazte Íntimo") */
+		.btn-entradas {
+		    background-color: var(--alianza-dorado);
+		    color: white; /* Texto azul oscuro */
+		    border-color: var(--alianza-dorado);
+		    font-weight: bold;
+		    padding: 12px 40px;
+		    font-size: 1.5rem;
+		    margin-top: 1.5rem;
+		    transition: background-color 0.3s;
+		}
+
+		.btn-entradas:hover {
+		    background-color: #9A845C; /* Tono de hover del dorado */
+		    color: var(--alianza-blanco); /* Cambiamos el texto a blanco en hover */
+		    border-color: #9A845C;
+		}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <a class="navbar-brand" href="/General/menu">Alianza Lima</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav mr-auto">
+										<li class="nav-item">
+											 <a class="nav-link" th:href="@{/General}">Inicio</a>
+										</li>
+										<li class="nav-item">
+											 <a class="nav-link" th:href="@{/General/Entrada}">Entradas</a>
+										</li>
+										<li class="nav-item">
+											 <a class="nav-link" th:href="@{/General/Producto}">Productos</a> 
+										</li>
+										<li class="nav-item">
+										     <a class="nav-link" th:href="@{/General/Carrito}">Carrito</a> 
+										</li>
+						            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-light" href="/General/login" style="border-radius: 0.25rem;">Login</a> 
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jumbotron text-center">
+        <h1 class="display-4">¡Bienvenidos al Portal Blanquiazul!</h1>
+        <p class="lead">Regístrate o inicia sesión para acceder a toda la información, comprar entradas y más.</p>
+        <hr class="my-4" style="border-top: 1px solid white;">
+        <a class="btn btn-intimo btn-lg" href="#" role="button">Hazte Íntimo</a>
+    </div>
+
+</body>
+</html>
