@@ -86,5 +86,22 @@ public class UsuarioService {
         usuarioRepo.save(usuarioExistente);
     }
     
+    @Transactional
+    public void eliminarUsuario(String idUsuario) {
+        // 1. Verificamos que el usuario realmente exista antes de intentar borrarlo
+        Usuario usuarioExistente = usuarioRepo.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("El usuario con ID " + idUsuario + " no existe"));
+
+        // 2. Guardamos el ID de la persona asociada (por si quieres borrarla también)
+        // String idPersona = usuarioExistente.getPersona().getId_persona();
+
+        // 3. Borramos las credenciales (El Usuario)
+        usuarioRepo.delete(usuarioExistente);
+
+        // Nota: Si también quieres borrar sus datos personales (nombre, DNI) de la base de datos
+        // para no dejar registros "fantasma", simplemente descomenta la siguiente línea:
+        // personaRepo.deleteById(idPersona);
+    }
+    
     
 }

@@ -31,27 +31,47 @@ public class EntradaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> buscarEntradaPorId(@PathVariable String id) {
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<?> actualizarEntrada(@PathVariable String id, @RequestBody Entrada entradaDetalles) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            // Buscamos la entrada (Spring nos devuelve un 'Optional' por si no existe)
-            java.util.Optional<Entrada> entradaEncontrada = entradaRepository.findById(id);
-
-            // Si la encontramos, la devolvemos con un status 200 OK
-            if (entradaEncontrada.isPresent()) {
-                return ResponseEntity.ok(entradaEncontrada.get());
-            } else {
-                // Si no existe, devolvemos el error 404
-                Map<String, Object> response = new HashMap<>();
-                response.put("mensaje", "No se encontró la entrada con el ID: " + id);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-            
+            return entradaRepository.findById(id)
+                .map(entrada -> {
+                    entrada.setEvento(entradaDetalles.getEvento());
+                    entrada.setFecha(entradaDetalles.getFecha());
+                    entrada.setPrecio(entradaDetalles.getPrecio());
+                    entrada.setCantidadDisponible(entradaDetalles.getCantidadDisponible());
+                    // Asegúrate de actualizar la ubicación si es necesario
+                    entrada.setUbicacion(entradaDetalles.getUbicacion());
+                    
+                    entradaRepository.save(entrada);
+                    response.put("mensaje", "Entrada actualizada correctamente");
+                    return ResponseEntity.ok(response);
+                }).orElseGet(() -> {
+                    response.put("mensaje", "No se encontró la entrada");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                });
         } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("mensaje", "Error al buscar la entrada");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminarEntrada(@PathVariable String id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (entradaRepository.existsById(id)) {
+                entradaRepository.deleteById(id);
+                response.put("mensaje", "Entrada eliminada con éxito");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("mensaje", "La entrada no existe");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            response.put("error", "No se puede eliminar la entrada porque tiene ventas asociadas");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
     }
 }
