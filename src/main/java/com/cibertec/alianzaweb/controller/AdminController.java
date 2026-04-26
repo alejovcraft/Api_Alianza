@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,5 +59,18 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al actualizar");
         }
     }
+    
+    @DeleteMapping("/usuarios/eliminar/{id}")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable String id) {
+        try {
+            usuarioService.eliminarUsuario(id); // Necesitarías crear este método en UsuarioService
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", "Usuario eliminado correctamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar");
+        }
 	
+}
+    
 }
