@@ -2,12 +2,17 @@ package com.cibertec.alianzaweb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "Usuario")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Usuario {
     
     @Id
@@ -20,6 +25,9 @@ public class Usuario {
     @JsonIgnore // Para que la contraseña no viaje al listar
     @Column(name = "contrasena", length = 300) 
     private String password;
+    
+    @Column(name = "estado")
+    private Integer estado;
 
     // Relación con Persona
     @OneToOne

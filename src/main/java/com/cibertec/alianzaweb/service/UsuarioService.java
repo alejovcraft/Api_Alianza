@@ -81,7 +81,7 @@ public class UsuarioService {
                     .orElseThrow(() -> new RuntimeException("Rol no válido"));
             usuarioExistente.setRol(nuevoRol);
         }
-        
+        usuarioExistente.setEstado(usuarioActualizado.getEstado());
        
         usuarioRepo.save(usuarioExistente);
     }
