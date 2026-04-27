@@ -1,11 +1,26 @@
+# Archivos de ayuda
 HELP.md
+
+# Archivos compilados y binarios
 target/
+*.class
+*.log
+
+# Maven Wrapper
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# Configuración de Spring Boot (ignorar credenciales locales)
+application.properties
+application.yml
+application-*.yml
+application-*.properties
+*.env
+
+### STS (Spring Tool Suite) ###
 .apt_generated
+.metadata/
 .classpath
 .factorypath
 .project
@@ -14,7 +29,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -31,3 +46,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
