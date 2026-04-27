@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,6 +102,21 @@ public class UsuarioController {
             response.put("mensaje", "Error interno al registrar el usuario");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    @PutMapping("/actualizar")
+    public ResponseEntity<?> actualizarUsuario(@RequestBody Usuario usuario) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            service.actualizarRolEstado(usuario);
+            
+            response.put("mensaje", "Usuario actualizado correctamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("mensaje", "Error al actualizar el usuario");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
     
