@@ -2,6 +2,7 @@ package com.cibertec.alianzaweb.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ public class VentaService {
     
     @Transactional
     public void procesarCompra(RegistroVentaDTO dto) {
-    	
+        
+        // 1. Validar el evento y el stock
         Entrada partido = entradaRepo.findById(dto.getIdEntrada())
                 .orElseThrow(() -> new RuntimeException("El evento no existe"));
 
@@ -44,41 +46,38 @@ public class VentaService {
             throw new RuntimeException("¡Lo sentimos! Solo quedan " + partido.getCantidadDisponible() + " entradas disponibles.");
         }
 
+        // 2. Actualizar stock del partido
         partido.setCantidadDisponible(partido.getCantidadDisponible() - dto.getCantidad());
         entradaRepo.save(partido); 
-    	
-    	Venta v = new Venta();
-    	v.setIdVenta("V-" + System.currentTimeMillis()); 
+        
+        // 3. Crear la Venta (Cabecera)
+        Venta v = new Venta();
+        v.setIdVenta("V-" + System.currentTimeMillis()); 
         v.setFecha_venta(LocalDateTime.now());            
         v.setUsuario(userRepo.findByUsername(dto.getUsername()));
-        
 
-        BigDecimal precio = entradaRepo.findById(dto.getIdEntrada()).get().getPrecio();
+        BigDecimal precio = partido.getPrecio();
         BigDecimal total = precio.multiply(new BigDecimal(dto.getCantidad()));
         v.setTotal(total);
-        
         ventaRepo.save(v);
 
-        // 2. Crear VentaEntrada	
+        // 4. Crear VentaEntrada (El detalle que agrupará a los asistentes)
         VentaEntrada ve = new VentaEntrada();
-        ve.setIdVentaentrada("VE-" + System.currentTimeMillis()); // Sin guion bajo
+        ve.setIdVentaentrada("VE-" + System.currentTimeMillis()); 
         ve.setVenta(v);
-        ve.setEntrada(entradaRepo.findById(dto.getIdEntrada()).get());
+        ve.setEntrada(partido);
         ve.setCantidad(dto.getCantidad());
+        
+        // Inicializamos la lista para evitar errores de puntero nulo
+        ve.setEntradasIndividuales(new ArrayList<>()); 
         veRepo.save(ve);
 
+        // 5. El Bucle de Asistentes (Aquí es donde se guarda cada entrada individual)
         for (var datosDueno : dto.getAsistentes()) {
-            EntradaIndividual ei = new EntradaIndividual();
-          
-            ei.setIdEntradaIndividual("EI-" + java.util.UUID.randomUUID().toString().substring(0,8));
-            ei.setVentaEntrada(ve);
-            ei.setEntrada(entradaRepo.findById(dto.getIdEntrada()).get());
-            eiRepo.save(ei);
-
-            DuenoEntrada dueno = new DuenoEntrada();
             
-            dueno.setIdDuenoentrada("D-" + datosDueno.getDni());
-            dueno.setEntradaIndividual(ei);
+            // A. Primero creamos al Dueño/Asistente
+            DuenoEntrada dueno = new DuenoEntrada();
+            dueno.setIdDuenoentrada("D-" + datosDueno.getDni() + "-" + (System.currentTimeMillis() % 1000));
             dueno.setNombre(datosDueno.getNombre());
             dueno.setApellido_p(datosDueno.getApellido_p());
             dueno.setApellido_m(datosDueno.getApellido_m());
@@ -86,8 +85,21 @@ public class VentaService {
             dueno.setTelefono(datosDueno.getTelefono());
             dueno.setGenero(datosDueno.getGenero());
             
+            // Importante: Guardamos al dueño primero
             duenoRepo.save(dueno);
+
+            // B. Luego creamos la Entrada Individual que vincula al asistente con la venta
+            EntradaIndividual ei = new EntradaIndividual();
+            ei.setIdEntradaIndividual("EI-" + UUID.randomUUID().toString().substring(0,8));
+            ei.setVentaEntrada(ve);  // Vincula al detalle de la venta
+            ei.setEntrada(partido);   // Vincula al partido
+            ei.setDuenoEntrada(dueno); // Vincula al dueño recién guardado
+            
+            // Guardamos la entrada individual
+            eiRepo.save(ei);
+            
+            // Opcional: añadimos a la lista del objeto 've'
+            ve.getEntradasIndividuales().add(ei);
         }
-    
     }
 }

@@ -1,6 +1,8 @@
 package com.cibertec.alianzaweb.controller;
 
 import com.cibertec.alianzaweb.dto.RegistroVentaDTO;
+import com.cibertec.alianzaweb.model.Venta;
+import com.cibertec.alianzaweb.repository.VentaRepository;
 import com.cibertec.alianzaweb.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +20,8 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
+    @Autowired
+    private VentaRepository ventaRepository;
 
     @PostMapping("/procesar")
     public ResponseEntity<?> procesarCompra(@RequestBody RegistroVentaDTO compraDto) {
@@ -33,5 +38,10 @@ public class VentaController {
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+    
+    @GetMapping("/usuario/{username}")
+    public ResponseEntity<List<Venta>> obtenerComprasUsuario(@PathVariable String username) {
+        return ResponseEntity.ok(ventaRepository.findByUsuario_Username(username));
     }
 }

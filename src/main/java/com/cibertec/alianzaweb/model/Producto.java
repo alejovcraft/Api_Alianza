@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Producto {
 	
     @Id
-    private String idProducto;
+    private String id_producto;
 
     private String nombre;
     private String descripcion;
